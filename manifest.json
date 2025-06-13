@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "フォルダ並び替え拡張",
+  "version": "1.0",
+  "description": "岡大manabi-webのフォルダ一覧を任意の基準で並び替えます。",
+  "content_scripts": [
+    {
+      "matches": ["https://okadai.manabi-web.net/supporter/folders/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
