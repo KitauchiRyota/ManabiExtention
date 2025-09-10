@@ -9,7 +9,7 @@
       "js": ["content.js"]
     },
     {
-      "matches": ["https://okadai.manabi-web.net/supporter/lessons/*/lesson_classes/*/groups/*/enquetes?group_ids%5B%5D=*"],
+      "matches": ["https://okadai.manabi-web.net/supporter/lessons/*/lesson_classes/*/groups/*/enquetes*"],
       "js": ["anketo.js"]
     }
   ]

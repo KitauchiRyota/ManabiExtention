@@ -132,7 +132,7 @@ for (let i = 0; i < n_topics; i++) {
     // 難易度のトピック
     const th = document.createElement('th');
     th.colSpan = 3; // 3段階評価
-    th.textContent = `topic${i + 1}`;
+    th.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
     setCellStyle(th, true);
     headerRow2.appendChild(th);
 }
@@ -140,7 +140,7 @@ for (let i = 0; i < n_topics; i++) {
     // 満足度のトピック
     const th2 = document.createElement('th');
     th2.colSpan = 4; // 4段階評価
-    th2.textContent = `topic${i + 1}`;
+    th2.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
     setCellStyle(th2, true);
     headerRow2.appendChild(th2);
 }
