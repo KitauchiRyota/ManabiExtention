@@ -1,3 +1,21 @@
+// // 日付の値取得確認
+// const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
+// const getDate = el => {
+// // Find the clock icon anywhere inside el
+// const clock = el.querySelector('.fa-clock-o');
+// if (!clock) return '';
+// // The date text may be in a text node or span after the icon
+
+// let node = clock.nextSibling;
+// // Skip empty text nodes
+// while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
+//     node = node.nextSibling;
+// }
+// if (!node) return '';
+// return (node.textContent || node.nodeValue || '').trim();
+// };
+// getDate(items[0]); // これで日付が取得できるか確認
+
 // 並び替えUIの挿入と並び替え処理
 (function () {
   // 対象リストの親要素を取得
