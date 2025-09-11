@@ -11,6 +11,10 @@
     {
       "matches": ["https://okadai.manabi-web.net/supporter/lessons/*/lesson_classes/*/groups/*/enquetes*"],
       "js": ["anketo.js"]
+    },
+    {
+      "matches": ["https://okadai.manabi-web.net/supporter/lessons/*/lesson_classes/*"],
+      "js": ["students.js"]
     }
   ]
 }
