@@ -132,9 +132,171 @@
     //   wrapper.innerHTML = finalOutputList.join('<br>');
     document.body.insertBefore(rtable, document.body.firstChild);
     }
-    
+
     const btn = document.getElementById('table-display-btn');
     btn.addEventListener('click', () => {
         displayTable();
     })
 })();
+
+const getDocumentFromUrl = async (url) => {
+    try{
+        const response = await fetch(url);
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        return parser.parseFromString(htmlText, 'text/html');
+    }catch(error){
+        console.error(`document取得に失敗しました。`, error);
+        return null;
+    }
+};
+
+const getAnketoResultFromDoc = (doc) => {
+    
+    // アンケート結果の表を取得
+    const table = doc.querySelector('table');
+    
+    // ヘッダ行から，集計対象のインデックス（列）と個数を取得する
+    const headers = table.rows[0].cells;
+
+    let n_topics = 0; // 集計対象のトピック数
+
+    // インデックスとトピック名を格納する辞書型配列を宣言
+    let topics_dict = [];
+
+    for (let i = 0; i < headers.length; i++) {
+        let headerText = headers[i].textContent;
+        
+        if(headerText.includes('で扱った内容について') && headerText.includes('あてはまるものを答えてください')) {
+        // 「，」と「、」を考慮．半角全角のパターンも考慮するとパターン数が多くなるので置換はしない．
+            // 「」の中身を取得
+            topics_dict.push( { name : headerText.match(/「(.*?)」/)[1] , index : i } );
+            n_topics++;
+        }
+    }
+
+    // 結果を格納する空の配列を宣言．
+    let diffs = []; // 難易度
+    let satis = []; // 満足度
+
+    const n_rows = table.rows.length; // 表の行数
+
+    for (let i = 0; i < topics_dict.length; i++) {  // トピック数分ループ
+        let diffs_tmp = [0, 0, 0];
+        let satis_tmp = [0, 0, 0, 0];
+        
+        for (let j = 1; j < n_rows; j++) { // 1行目はヘッダ行なので2行目から
+            let diff = table.rows[j].cells[topics_dict[i].index].textContent;
+            let sat = table.rows[j].cells[topics_dict[i].index + 1].textContent;
+
+            // 先頭の値を10進数に変換
+            let diffValue = parseInt(diff[1], 10);
+            let satValue = parseInt(sat[1], 10);
+
+            if (diffValue >= 1 && diffValue <= 3) {
+                diffs_tmp[diffValue - 1]++;
+            }
+
+            if (satValue >= 1 && satValue <= 4) {
+                // eval(`satis${satValue}++`);
+                satis_tmp[satValue - 1]++;
+            }
+        }
+        // 結果を配列に格納
+        diffs.push(diffs_tmp);
+        satis.push(satis_tmp);
+    }
+
+    // 結果のテキストを生成
+    let resultText = "集計結果\n";
+
+    for (let index = 0; index < topics_dict.length; index++) {
+        resultText += `topic${index + 1} ${topics_dict[index].name}\n`;
+        resultText += `理解度\n1：${diffs[index][0]}\n2：${diffs[index][1]}\n3：${diffs[index][2]}\n\n`;
+        resultText += `満足度\n1：${satis[index][0]}\n2：${satis[index][1]}\n3：${satis[index][2]}\n4：${satis[index][3]}\n\n`;
+    }
+
+    // コンソールログに表示
+    console.log(resultText);
+}
+
+const anketo_one = async () =>{
+    
+    // ページ内にある全ての対象 <a> タグをリストとして取得
+    const linkElements = document.querySelectorAll('a.list-group-item');
+    const numGroups = linkElements.length;
+
+    // 最終的な出力結果
+    // const finalOutputList = [];
+
+    if (numGroups === 0) {
+        console.error('処理を中断しました: 対象のリンクが見つかりません。');
+        return;
+    }
+
+    for (const [index, linkElement] of linkElements.entries()) {
+        // 「O班」を取得
+        let groupName = '';
+        const h4Element = linkElement.querySelector('h4');
+        if (h4Element) {
+            const fullText = h4Element.textContent.trim();
+            const parts = fullText.split(/\s+/);
+            
+            groupName = parts.length > 1 ? parts[1] : fullText;
+        } else {
+            continue;
+        }
+        
+        // 子ページのhtmlを取得
+        const url = linkElement.href;
+
+        try {
+            const response = await fetch(url);
+            const htmlText = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            // 「アンケート」ボタンのaタグを取得
+            const anketoBtn = Array.from(doc.querySelectorAll('a.btn.btn-sm.btn-primary'))
+                .find(btn => btn.textContent.trim() === 'アンケート');
+
+            if (anketoBtn) {
+                const anketoUrl = anketoBtn.href;
+                const anketoDoc = await getDocumentFromUrl(anketoUrl);
+                if(anketoDoc){
+                    getAnketoResultFromDoc(anketoDoc);
+                }else{
+                    console.log(`${groupName}のページでアンケートページのdocumentを取得できませんでした。`);
+                }
+            } else {
+                console.log(`${groupName}のページでアンケートボタンを取得できませんでした。`);
+
+            }
+
+        // if (table) {
+        //     const allRows = table.querySelectorAll('tbody tr');
+        //     allRows.forEach(row => {
+        //     const nameCell = row.cells[0];
+        //     const classFrom = row.cells[3].textContent.trim();
+        //     if (classFrom) {
+        //         const name = nameCell.textContent.trim();
+        //         // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
+        //         finalOutputList.push({groupId:index,studentName:name,originClass:classFrom});
+        //     }
+        //     //   if (nameCell) {
+        //     //     const name = nameCell.textContent.trim();
+        //     //     // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
+        //     //     finalOutputList.push(`${groupName}\t${name}`);
+        //     //   }
+        // //     });
+        // } else {
+        //     console.log(`データなし: ${groupName} (${url}) のページにテーブルが見つかりませんでした。`);
+        // }
+
+        } catch (error) {
+            console.error(`データ取得に失敗しました (${url}):`, error);
+        }
+    }
+
+
+}
