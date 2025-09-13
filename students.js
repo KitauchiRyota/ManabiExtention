@@ -1,11 +1,11 @@
 (function(){
     // UI作成
     const controls = document.createElement('div');
-    controls.id = 'table-display-btn';
+    controls.id = 'table-display-controls';
     controls.style.margin = '0 auto';
-    // controlsをページ先頭に挿入
+    // UIをページ先頭に挿入
     controls.innerHTML = `
-    <button id="table-display-btn" style="margin:10px auto; display:block;">受講生一覧を表示</button>
+    <button id="table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>
     `;
     document.body.insertBefore(controls, document.body.firstChild);
     
@@ -132,6 +132,7 @@
     //   wrapper.innerHTML = finalOutputList.join('<br>');
     document.body.insertBefore(rtable, document.body.firstChild);
     }
+    
     const btn = document.getElementById('table-display-btn');
     btn.addEventListener('click', () => {
         displayTable();
