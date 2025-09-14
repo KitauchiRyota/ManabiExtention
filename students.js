@@ -134,13 +134,15 @@
         }
         //   const wrapper = document.createElement('div');
         //   wrapper.innerHTML = finalOutputList.join('<br>');
-        document.body.insertBefore(rtable, document.body.firstChild);
+        return rtable;
+        // document.body.after(rtable, document.body.firstChild);
     }
 
     const btn = document.getElementById('table-display-btn');
-    btn.addEventListener('click', () => {
-        displayTable();
+    btn.addEventListener('click', async () => {
         btn.disabled = true;
+        const rtable = await displayTable();
+        btn.after(rtable);
     })
 
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
@@ -379,7 +381,7 @@ const displayAnketoResultTable = (diffs,satis,doc) => {
     // wrapper.appendChild(p3);
 
     // ページの先頭に追加
-    doc.body.insertBefore(wrapper, doc.body.firstChild);
+    doc.body.after(wrapper, doc.body.firstChild);
 }
 
 const anketo_one = async () =>{
