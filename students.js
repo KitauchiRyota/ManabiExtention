@@ -21,9 +21,10 @@
     })
 
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
-    anketo_btn.addEventListener('click' , () => {
-        anketo_one();
+    anketo_btn.addEventListener('click' , async () => {
         anketo_btn.disabled = true;
+        const rtable = await anketo_one();
+        anketo_btn.after(rtable);
     })
 })();
 
@@ -234,7 +235,7 @@ const getAnketoResultFromDoc = (doc) => {
     // console.log(resultText);
 }
 
-const displayAnketoResultTable = (diffs,satis,doc) => {
+const displayAnketoResultTable = (diffs,satis) => {
     const n_topics = diffs.length;
     // テーブル作成
     const rtable = document.createElement('table');
@@ -358,7 +359,7 @@ const displayAnketoResultTable = (diffs,satis,doc) => {
     }
 
     rtable.appendChild(row);
-    doc.body.insertBefore(rtable, doc.body.firstChild);
+    // doc.body.insertBefore(rtable, doc.body.firstChild);
 
     // ラッパーdivを作成して中央ぞろえ
     const wrapper = document.createElement('div');
@@ -372,7 +373,7 @@ const displayAnketoResultTable = (diffs,satis,doc) => {
 
     const p1 = document.createElement('p');
     const p2 = document.createElement('p');
-    const p3 = document.createElement('p');
+    // const p3 = document.createElement('p');
     p1.textContent = "・アンケート集計結果です．";
     p2.textContent = "・この表はGoogleドキュメントにコピー＆ペーストできます．";
     // p3.textContent = "・連続して実行すると結果が変わるので，集計しなおす場合は一度ページを更新してください．";
@@ -381,7 +382,10 @@ const displayAnketoResultTable = (diffs,satis,doc) => {
     // wrapper.appendChild(p3);
 
     // ページの先頭に追加
-    doc.body.after(wrapper, doc.body.firstChild);
+    // doc.body.after(wrapper, doc.body.firstChild);
+    wrapper.appendChild(rtable);
+    return rtable;
+    // return wrapper;
 }
 
 const anketo_one = async () =>{
@@ -462,7 +466,8 @@ const anketo_one = async () =>{
             console.error(`データ取得に失敗しました (${url}):`, error);
         }
     }
-    displayAnketoResultTable(diffs_result, satis_result, document);
+    return displayAnketoResultTable(diffs_result, satis_result);
+    // displayAnketoResultTable(diffs_result, satis_result, document);
     // console.log('diffs:'+JSON.stringify(diffs_result));
     // console.log('status:'+JSON.stringify(satis_result));
 }
