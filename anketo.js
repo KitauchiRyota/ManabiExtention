@@ -106,7 +106,7 @@ const headerRow1 = document.createElement('tr');
 
 // 空セル（行番号列）
 let blank = document.createElement('th');
-blank.rowSpan = 3;
+blank.rowSpan = 3; // ヘッダー用に3行分の高さを確保
 setCellStyle(blank, true);
 headerRow1.appendChild(blank);
 
