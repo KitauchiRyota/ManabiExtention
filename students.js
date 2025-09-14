@@ -206,18 +206,19 @@ const getAnketoResultFromDoc = (doc) => {
         diffs.push(diffs_tmp);
         satis.push(satis_tmp);
     }
+    return { diffs, satis };
 
-    // 結果のテキストを生成
-    let resultText = "集計結果\n";
+    // // 結果のテキストを生成
+    // let resultText = "集計結果\n";
 
-    for (let index = 0; index < topics_dict.length; index++) {
-        resultText += `topic${index + 1} ${topics_dict[index].name}\n`;
-        resultText += `理解度\n1：${diffs[index][0]}\n2：${diffs[index][1]}\n3：${diffs[index][2]}\n\n`;
-        resultText += `満足度\n1：${satis[index][0]}\n2：${satis[index][1]}\n3：${satis[index][2]}\n4：${satis[index][3]}\n\n`;
-    }
+    // for (let index = 0; index < topics_dict.length; index++) {
+    //     resultText += `topic${index + 1} ${topics_dict[index].name}\n`;
+    //     resultText += `理解度\n1：${diffs[index][0]}\n2：${diffs[index][1]}\n3：${diffs[index][2]}\n\n`;
+    //     resultText += `満足度\n1：${satis[index][0]}\n2：${satis[index][1]}\n3：${satis[index][2]}\n4：${satis[index][3]}\n\n`;
+    // }
 
-    // コンソールログに表示
-    console.log(resultText);
+    // // コンソールログに表示
+    // console.log(resultText);
 }
 
 const anketo_one = async () =>{
@@ -233,6 +234,10 @@ const anketo_one = async () =>{
         console.error('処理を中断しました: 対象のリンクが見つかりません。');
         return;
     }
+
+    // 結果を格納する空の配列を宣言
+    let diffs_result = [];
+    let satis_result = [];
 
     for (const [index, linkElement] of linkElements.entries()) {
         // 「O班」を取得
@@ -264,39 +269,37 @@ const anketo_one = async () =>{
                 const anketoUrl = anketoBtn.href;
                 const anketoDoc = await getDocumentFromUrl(anketoUrl);
                 if(anketoDoc){
-                    getAnketoResultFromDoc(anketoDoc);
+                    const { diffs, satis } = getAnketoResultFromDoc(anketoDoc);
+                    console.log('diffs:'+diffs);
+                    console.log('satis:'+satis);
+                    if(index ===  0){
+                        // 初回のループでは配列へコピー
+                        diffs_result = structuredClone(diffs);
+                        satis_result = structuredClone(satis);
+                    } else {
+                        // 2回目以降は配列の各要素を加算
+                        const n_topics = diffs_result.length;
+                        const n_diffs = 3;
+                        const n_satis = 4;
+                        for (let i = 0; i < n_topics; i++) {
+                            for (let j = 0; j < n_diffs; j++) {
+                                diffs_result[i][j] += diffs[i][j];
+                            }
+                            for (let j = 0; j < n_satis; j++) {
+                                satis_result[i][j] += satis[i][j];
+                            }
+                        }
+                    }
                 }else{
                     console.log(`${groupName}のページでアンケートページのdocumentを取得できませんでした。`);
                 }
             } else {
                 console.log(`${groupName}のページでアンケートボタンを取得できませんでした。`);
-
             }
-
-        // if (table) {
-        //     const allRows = table.querySelectorAll('tbody tr');
-        //     allRows.forEach(row => {
-        //     const nameCell = row.cells[0];
-        //     const classFrom = row.cells[3].textContent.trim();
-        //     if (classFrom) {
-        //         const name = nameCell.textContent.trim();
-        //         // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
-        //         finalOutputList.push({groupId:index,studentName:name,originClass:classFrom});
-        //     }
-        //     //   if (nameCell) {
-        //     //     const name = nameCell.textContent.trim();
-        //     //     // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
-        //     //     finalOutputList.push(`${groupName}\t${name}`);
-        //     //   }
-        // //     });
-        // } else {
-        //     console.log(`データなし: ${groupName} (${url}) のページにテーブルが見つかりませんでした。`);
-        // }
-
         } catch (error) {
             console.error(`データ取得に失敗しました (${url}):`, error);
         }
     }
-
-
+    console.log('diffs:'+JSON.stringify(diffs_result));
+    console.log('status:'+JSON.stringify(satis_result));
 }
