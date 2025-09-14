@@ -4,11 +4,15 @@
     controls.id = 'table-display-controls';
     controls.style.margin = '0 auto';
     // UIをページ先頭に挿入
-    controls.innerHTML = `
-    <button id="table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>
-    `;
+    controls.innerHTML = `<button id="table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
     document.body.insertBefore(controls, document.body.firstChild);
-    
+
+    const anketoControls = document.createElement('div');
+    anketoControls.id =  'anketo-result-table-controls';
+    anketoControls.style.margin = '0 auto';
+    anketoControls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
+    document.body.insertBefore(anketoControls, document.body.firstChild);
+
     async function displayTable() {
 
         // 1. ページ内にある全ての対象 <a> タグをリストとして取得します
@@ -122,20 +126,27 @@
             }
         }
 
-    if (finalOutputList.length > 0) {
-        console.log(finalOutputList.join('\n'));
-        console.log(`--- 全ての処理が完了しました ---`);
-    } else {
-        console.log("有効なデータが1件も見つかりませんでした。");
-    }
-    //   const wrapper = document.createElement('div');
-    //   wrapper.innerHTML = finalOutputList.join('<br>');
-    document.body.insertBefore(rtable, document.body.firstChild);
+        if (finalOutputList.length > 0) {
+            console.log(finalOutputList.join('\n'));
+            console.log(`--- 全ての処理が完了しました ---`);
+        } else {
+            console.log("有効なデータが1件も見つかりませんでした。");
+        }
+        //   const wrapper = document.createElement('div');
+        //   wrapper.innerHTML = finalOutputList.join('<br>');
+        document.body.insertBefore(rtable, document.body.firstChild);
     }
 
     const btn = document.getElementById('table-display-btn');
     btn.addEventListener('click', () => {
         displayTable();
+        btn.disabled = true;
+    })
+
+    const anketo_btn = document.getElementById('anketo-result-table-display-btn');
+    anketo_btn.addEventListener('click' , () => {
+        anketo_one();
+        anketo_btn.disabled = true;
     })
 })();
 
@@ -372,7 +383,6 @@ const displayAnketoResultTable = (diffs,satis,doc) => {
 }
 
 const anketo_one = async () =>{
-    
     // ページ内にある全ての対象 <a> タグをリストとして取得
     const linkElements = document.querySelectorAll('a.list-group-item');
     const numGroups = linkElements.length;
@@ -451,6 +461,6 @@ const anketo_one = async () =>{
         }
     }
     displayAnketoResultTable(diffs_result, satis_result, document);
-    console.log('diffs:'+JSON.stringify(diffs_result));
-    console.log('status:'+JSON.stringify(satis_result));
+    // console.log('diffs:'+JSON.stringify(diffs_result));
+    // console.log('status:'+JSON.stringify(satis_result));
 }
