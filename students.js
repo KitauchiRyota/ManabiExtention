@@ -2,6 +2,7 @@
     // UIを作成し、ページ先頭に挿入
     // 振替受講生表示ボタン
     const resche_controls = document.createElement('div');
+    resche_controls.style.textAlign = 'center';
     resche_controls.innerHTML = `<button id="resche-students-table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
     document.body.insertBefore(resche_controls, document.body.firstChild);
 
@@ -141,9 +142,20 @@ async function create_resche_students_table() {
     } else {
         console.log("有効なデータが1件も見つかりませんでした。");
     }
-    //   const wrapper = document.createElement('div');
+    
+    const wrapper = document.createElement('div');
+    wrapper.style.textAlign = 'left';
+    wrapper.style.width = '50%';
+    wrapper.style.margin = 'auto';
+    finalOutputList.forEach(item => {
+        const p = document.createElement('p');
+        p.textContent = `${item.groupId + 1}班, ${item.studentName}, ${item.originClass}`;
+        wrapper.appendChild(p);
+    });
+    return wrapper;
+
     //   wrapper.innerHTML = finalOutputList.join('<br>');
-    return result_table;
+    // return result_table;
     // document.body.after(rtable, document.body.firstChild);
 }
 
