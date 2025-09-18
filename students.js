@@ -83,58 +83,58 @@ async function create_resche_students_table() {
         } catch (error) {
             console.error(`データ取得に失敗しました (${url}):`, error);
         }
-    }   
-
-    // 結果を出力する表を作成
-    const result_table = document.createElement('table');
-    result_table.border = '1';
-    // rtable.style.borderCollapse = 'collapse';
-    result_table.style.margin = '0 auto';
-    result_table.style.color = '#000000';
-    result_table.style.marginBottom = '20px';
-    result_table.style.fontSize = '16px';
-    result_table.style.fontFamily = 'Arial, sans-serif';
-    result_table.style.border = '1px solid #B7B7B7';
-
-    const headerRow = document.createElement('tr');
-    const headers = ['班', '受講生名', '振替状況'];
-    headers.forEach(headerText => {
-        const th = document.createElement('th');
-        th.textContent = headerText;
-        headerRow.appendChild(th);
-    });
-    result_table.appendChild(headerRow);
-
-    for(let i=0;i<numGroups;i++){
-        if(finalOutputList.filter(item => item.groupId === i).length === 0){
-            const groupRow = document.createElement('tr');
-            const groupId = document.createElement('th');
-            groupId.textContent = `${i+1}班`;
-            groupRow.appendChild(groupId);
-            const tmpCell = document.createElement('td');
-            tmpCell.colSpan = 2;
-            tmpCell.textContent = `${i+1}班振替受講生無し`;
-            groupRow.appendChild(tmpCell);
-            result_table.appendChild(groupRow);
-        }else{
-            for(const [index,item] of finalOutputList.filter(item => item.groupId === i).entries()){
-                const groupRow = document.createElement('tr');
-                if(index === 0) {
-                    const groupId = document.createElement('th');
-                    groupId.rowSpan = finalOutputList.filter(item => item.groupId === i).length;
-                    groupId.textContent = `${i+1}班`;
-                    groupRow.appendChild(groupId);
-                }
-                const nameCell = document.createElement('td');
-                nameCell.textContent = item.studentName;
-                const classCell = document.createElement('td');
-                classCell.textContent = item.originClass;
-                groupRow.appendChild(nameCell);
-                groupRow.appendChild(classCell);
-                result_table.appendChild(groupRow);
-            }
-        }
     }
+
+    // // 結果を出力する表を作成する場合に使用
+    // const result_table = document.createElement('table');
+    // result_table.border = '1';
+    // // rtable.style.borderCollapse = 'collapse';
+    // result_table.style.margin = '0 auto';
+    // result_table.style.color = '#000000';
+    // result_table.style.marginBottom = '20px';
+    // result_table.style.fontSize = '16px';
+    // result_table.style.fontFamily = 'Arial, sans-serif';
+    // result_table.style.border = '1px solid #B7B7B7';
+
+    // const headerRow = document.createElement('tr');
+    // const headers = ['班', '受講生名', '振替状況'];
+    // headers.forEach(headerText => {
+    //     const th = document.createElement('th');
+    //     th.textContent = headerText;
+    //     headerRow.appendChild(th);
+    // });
+    // result_table.appendChild(headerRow);
+
+    // for(let i=0;i<numGroups;i++){
+    //     if(finalOutputList.filter(item => item.groupId === i).length === 0){
+    //         const groupRow = document.createElement('tr');
+    //         const groupId = document.createElement('th');
+    //         groupId.textContent = `${i+1}班`;
+    //         groupRow.appendChild(groupId);
+    //         const tmpCell = document.createElement('td');
+    //         tmpCell.colSpan = 2;
+    //         tmpCell.textContent = `${i+1}班振替受講生無し`;
+    //         groupRow.appendChild(tmpCell);
+    //         result_table.appendChild(groupRow);
+    //     }else{
+    //         for(const [index,item] of finalOutputList.filter(item => item.groupId === i).entries()){
+    //             const groupRow = document.createElement('tr');
+    //             if(index === 0) {
+    //                 const groupId = document.createElement('th');
+    //                 groupId.rowSpan = finalOutputList.filter(item => item.groupId === i).length;
+    //                 groupId.textContent = `${i+1}班`;
+    //                 groupRow.appendChild(groupId);
+    //             }
+    //             const nameCell = document.createElement('td');
+    //             nameCell.textContent = item.studentName;
+    //             const classCell = document.createElement('td');
+    //             classCell.textContent = item.originClass;
+    //             groupRow.appendChild(nameCell);
+    //             groupRow.appendChild(classCell);
+    //             result_table.appendChild(groupRow);
+    //         }
+    //     }
+    // }
 
     if (finalOutputList.length > 0) {
         console.log(finalOutputList.join('\n'));
@@ -147,11 +147,25 @@ async function create_resche_students_table() {
     wrapper.style.textAlign = 'left';
     wrapper.style.width = '50%';
     wrapper.style.margin = 'auto';
-    finalOutputList.forEach(item => {
-        const p = document.createElement('p');
-        p.textContent = `${item.groupId + 1}班, ${item.studentName}, ${item.originClass}`;
-        wrapper.appendChild(p);
-    });
+    for(let i=0;i<numGroups;i++){
+        if(finalOutputList.filter(item => item.groupId === i).length === 0){
+            const p = document.createElement('p');
+            p.textContent = `${i+1}班振替受講生無し`;
+            wrapper.appendChild(p);
+        }else{
+            for(const [index,item] of finalOutputList.filter(item => item.groupId === i).entries()){
+                const p = document.createElement('p');
+                p.textContent = `${i+1}班, ${item.studentName}, ${item.originClass}`;
+                wrapper.appendChild(p);
+            }
+        }
+    }
+        
+    // finalOutputList.forEach(item => {
+    //     const p = document.createElement('p');
+    //     p.textContent = `${item.groupId + 1}班, ${item.studentName}, ${item.originClass}`;
+    //     wrapper.appendChild(p);
+    // });
     return wrapper;
 
     //   wrapper.innerHTML = finalOutputList.join('<br>');
