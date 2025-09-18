@@ -27,67 +27,62 @@
 
 async function create_resche_students_table() {
 
-    // 1. ページ内にある全ての対象 <a> タグをリストとして取得します
+    // ページ内にある全ての対象 <a> タグをリストとして取得
     const linkElements = document.querySelectorAll('a.list-group-item');
 
     const numGroups = linkElements.length;
 
-    // 最終的な出力結果をすべて保存するための、空のリストを用意します
+    // 最終的な出力結果を保存するための空のリストを用意
     const finalOutputList = [];
 
     if (numGroups === 0) {
-    console.error('処理を中断しました: 対象のリンクが見つかりません。');
-    return;
+        console.error('処理を中断しました: 対象のリンクが見つかりません。');
+        return;
     }
 
-    // 2. 取得した全てのリンクに対して、ループ処理を実行します
+    // 取得した全てのリンクをループ処理
     for (const [index, linkElement] of linkElements.entries()) {
 
-        // a. 親ページの所属名を取得
+        // 親ページの所属名を取得
         let groupName = '';
         const h4Element = linkElement.querySelector('h4');
         if (h4Element) {
-        const fullText = h4Element.textContent.trim();
-        const parts = fullText.split(/\s+/);
-        //   「O班」を取得
-        groupName = parts.length > 1 ? parts[1] : fullText;
+            const fullText = h4Element.textContent.trim();
+            const parts = fullText.split(/\s+/);
+            //   「O班」を取得
+            groupName = parts.length > 1 ? parts[1] : fullText;
+            // 対面クラスとオンラインクラスの両方に対応
+            // 「情報統括センター 1班」の場合は「1班」のみ、「1班」との場合は「1班」を返す
         } else {
-        continue; 
+            continue;
         }
         
-        // b. 子ページの受講者名を取得
+        // 子ページの受講者名を取得
         const url = linkElement.href;
 
         try {
-        const response = await fetch(url);
-        const htmlText = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlText, 'text/html');
-        const table = doc.querySelector('table.list');
+            const doc = await getDocumentFromUrl(url);
+            const students_table = doc.querySelector('table.list');
 
-        if (table) {
-            const allRows = table.querySelectorAll('tbody tr');
-            allRows.forEach(row => {
-            const nameCell = row.cells[0];
-            const classFrom = row.cells[3].textContent.trim();
-            if (classFrom) {
-                const name = nameCell.textContent.trim();
-                // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
-                finalOutputList.push({groupId:index,studentName:name,originClass:classFrom});
+            if (students_table) {
+                const allRows = students_table.querySelectorAll('tbody tr');
+                allRows.forEach(row => {
+                    const nameCell = row.cells[0];
+                    // classFromと命名しているが、振替で出て行くクラスも含む
+                    const classFrom = row.cells[3].textContent.trim();
+                    if (classFrom) {
+                        const name = nameCell.textContent.trim();
+                        // 「班ID，受講生氏名，変更元（先）クラス」の形式で、最終結果リストに追加
+                        finalOutputList.push({groupId:index,studentName:name,originClass:classFrom});
+                    }
+                });
+            } else {
+                console.log(`データなし: ${groupName} (${url}) のページに受講生情報の表が見つかりませんでした。`);
             }
-            //   if (nameCell) {
-            //     const name = nameCell.textContent.trim();
-            //     // c. 「所属名\t名前」の形式で、最終結果リストに直接追加します
-            //     finalOutputList.push(`${groupName}\t${name}`);
-            //   }
-            });
-        } else {
-            console.log(`データなし: ${groupName} (${url}) のページにテーブルが見つかりませんでした。`);
-        }
 
         } catch (error) {
-        console.error(`データ取得に失敗しました (${url}):`, error);
-    }
+            console.error(`データ取得に失敗しました (${url}):`, error);
+        }
     }   
 
     // 3. 全てのループが完了した後、溜めた結果を改行でつないで一度だけ出力します
