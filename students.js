@@ -26,6 +26,18 @@
     })
 })();
 
+const getDocumentFromUrl = async (url) => {
+    try{
+        const response = await fetch(url);
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        return parser.parseFromString(htmlText, 'text/html');
+    }catch(error){
+        console.error(`document取得に失敗しました。`, error);
+        return null;
+    }
+};
+
 async function create_resche_students_table() {
 
     // ページ内にある全ての対象 <a> タグをリストとして取得
@@ -165,18 +177,6 @@ async function create_resche_students_table() {
     return wrapper;
     // return result_table;
 }
-
-const getDocumentFromUrl = async (url) => {
-    try{
-        const response = await fetch(url);
-        const htmlText = await response.text();
-        const parser = new DOMParser();
-        return parser.parseFromString(htmlText, 'text/html');
-    }catch(error){
-        console.error(`document取得に失敗しました。`, error);
-        return null;
-    }
-};
 
 const getAnketoResultFromDoc = (doc) => {
     
