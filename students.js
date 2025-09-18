@@ -1,23 +1,24 @@
 (function(){
-    // UI作成
-    const controls = document.createElement('div');
-    controls.id = 'table-display-controls';
-    controls.style.margin = '0 auto';
-    // UIをページ先頭に挿入
-    controls.innerHTML = `<button id="table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
-    document.body.insertBefore(controls, document.body.firstChild);
+    // UIを作成し、ページ先頭に挿入
+    // 振替受講生表示ボタン
+    const resche_controls = document.createElement('div');
+    // resche_controls.id = 'table-display-controls';
+    resche_controls.style.margin = '0 auto';
+    resche_controls.innerHTML = `<button id="resche-students-table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
+    document.body.insertBefore(resche_controls, document.body.firstChild);
 
-    const anketoControls = document.createElement('div');
-    anketoControls.id =  'anketo-result-table-controls';
-    anketoControls.style.margin = '0 auto';
-    anketoControls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
-    document.body.insertBefore(anketoControls, document.body.firstChild);
+    // アンケート結果表示ボタン
+    const anketo_controls = document.createElement('div');
+    // anketo_controls.id =  'anketo-result-table-controls';
+    anketo_controls.style.margin = '0 auto';
+    anketo_controls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
+    document.body.insertBefore(anketo_controls, document.body.firstChild);
 
-    const btn = document.getElementById('table-display-btn');
-    btn.addEventListener('click', async () => {
-        btn.disabled = true;
+    const resche_btn = document.getElementById('resche-students-table-display-btn');
+    resche_btn.addEventListener('click', async () => {
+        resche_btn.disabled = true;
         const rtable = await displayTable();
-        btn.after(rtable);
+        resche_btn.after(rtable);
     })
 
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
