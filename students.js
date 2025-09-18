@@ -143,6 +143,7 @@ async function create_resche_students_table() {
         console.log("有効なデータが1件も見つかりませんでした。");
     }
     
+    // 結果をテキストで生成
     const wrapper = document.createElement('div');
     wrapper.style.textAlign = 'left';
     wrapper.style.width = '50%';
@@ -160,17 +161,9 @@ async function create_resche_students_table() {
             }
         }
     }
-        
-    // finalOutputList.forEach(item => {
-    //     const p = document.createElement('p');
-    //     p.textContent = `${item.groupId + 1}班, ${item.studentName}, ${item.originClass}`;
-    //     wrapper.appendChild(p);
-    // });
-    return wrapper;
 
-    //   wrapper.innerHTML = finalOutputList.join('<br>');
+    return wrapper;
     // return result_table;
-    // document.body.after(rtable, document.body.firstChild);
 }
 
 const getDocumentFromUrl = async (url) => {
