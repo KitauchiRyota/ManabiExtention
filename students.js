@@ -68,11 +68,10 @@ async function create_resche_students_table() {
                 const allRows = students_table.querySelectorAll('tbody tr');
                 allRows.forEach(row => {
                     const nameCell = row.cells[0];
-                    // classFromと命名しているが、振替で出て行くクラスも含む
                     const classFrom = row.cells[3].textContent.trim();
-                    if (classFrom) {
+                    if (classFrom && classFrom.endsWith('から)')) {
                         const name = nameCell.textContent.trim();
-                        // 「班ID，受講生氏名，変更元（先）クラス」の形式で、最終結果リストに追加
+                        // 「班ID，受講生氏名，変更元クラス」の形式で、最終結果リストに追加
                         finalOutputList.push({groupId:index,studentName:name,originClass:classFrom});
                     }
                 });
