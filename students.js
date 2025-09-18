@@ -85,16 +85,16 @@ async function create_resche_students_table() {
         }
     }   
 
-    // 3. 全てのループが完了した後、溜めた結果を改行でつないで一度だけ出力します
-    const rtable = document.createElement('table');
-    rtable.border = '1';
+    // 結果を出力する表を作成
+    const result_table = document.createElement('table');
+    result_table.border = '1';
     // rtable.style.borderCollapse = 'collapse';
-    rtable.style.margin = '0 auto';
-    rtable.style.color = '#000000';
-    rtable.style.marginBottom = '20px';
-    rtable.style.fontSize = '13px';
-    rtable.style.fontFamily = 'Arial, sans-serif';
-    rtable.style.border = '1px solid #B7B7B7';
+    result_table.style.margin = '0 auto';
+    result_table.style.color = '#000000';
+    result_table.style.marginBottom = '20px';
+    result_table.style.fontSize = '16px';
+    result_table.style.fontFamily = 'Arial, sans-serif';
+    result_table.style.border = '1px solid #B7B7B7';
 
     const headerRow = document.createElement('tr');
     const headers = ['班', '受講生名', '振替状況'];
@@ -103,7 +103,7 @@ async function create_resche_students_table() {
         th.textContent = headerText;
         headerRow.appendChild(th);
     });
-    rtable.appendChild(headerRow);
+    result_table.appendChild(headerRow);
 
     for(let i=0;i<numGroups;i++){
         if(finalOutputList.filter(item => item.groupId === i).length === 0){
@@ -115,7 +115,7 @@ async function create_resche_students_table() {
             tmpCell.colSpan = 2;
             tmpCell.textContent = `${i+1}班振替受講生無し`;
             groupRow.appendChild(tmpCell);
-            rtable.appendChild(groupRow);
+            result_table.appendChild(groupRow);
         }else{
             for(const [index,item] of finalOutputList.filter(item => item.groupId === i).entries()){
                 const groupRow = document.createElement('tr');
@@ -128,7 +128,7 @@ async function create_resche_students_table() {
                 classCell.textContent = item.originClass;
                 groupRow.appendChild(nameCell);
                 groupRow.appendChild(classCell);
-                rtable.appendChild(groupRow);
+                result_table.appendChild(groupRow);
             }
         }
     }
@@ -141,7 +141,7 @@ async function create_resche_students_table() {
     }
     //   const wrapper = document.createElement('div');
     //   wrapper.innerHTML = finalOutputList.join('<br>');
-    return rtable;
+    return result_table;
     // document.body.after(rtable, document.body.firstChild);
 }
 
