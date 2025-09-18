@@ -13,7 +13,7 @@
     const resche_btn = document.getElementById('resche-students-table-display-btn');
     resche_btn.addEventListener('click', async () => {
         resche_btn.disabled = true;
-        const rtable = await create_resche_students_talbe();
+        const rtable = await create_resche_students_table();
         resche_btn.after(rtable);
     })
 
@@ -25,19 +25,7 @@
     })
 })();
 
-const getDocumentFromUrl = async (url) => {
-    try{
-        const response = await fetch(url);
-        const htmlText = await response.text();
-        const parser = new DOMParser();
-        return parser.parseFromString(htmlText, 'text/html');
-    }catch(error){
-        console.error(`document取得に失敗しました。`, error);
-        return null;
-    }
-};
-
-async function create_resche_students_talbe() {
+async function create_resche_students_table() {
 
     // 1. ページ内にある全ての対象 <a> タグをリストとして取得します
     const linkElements = document.querySelectorAll('a.list-group-item');
@@ -161,6 +149,18 @@ async function create_resche_students_talbe() {
     return rtable;
     // document.body.after(rtable, document.body.firstChild);
 }
+
+const getDocumentFromUrl = async (url) => {
+    try{
+        const response = await fetch(url);
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        return parser.parseFromString(htmlText, 'text/html');
+    }catch(error){
+        console.error(`document取得に失敗しました。`, error);
+        return null;
+    }
+};
 
 const getAnketoResultFromDoc = (doc) => {
     
