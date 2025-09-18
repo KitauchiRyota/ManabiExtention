@@ -108,7 +108,7 @@ async function create_resche_students_table() {
     for(let i=0;i<numGroups;i++){
         if(finalOutputList.filter(item => item.groupId === i).length === 0){
             const groupRow = document.createElement('tr');
-            const groupId = document.createElement('td');
+            const groupId = document.createElement('th');
             groupId.textContent = `${i+1}班`;
             groupRow.appendChild(groupId);
             const tmpCell = document.createElement('td');
@@ -119,9 +119,12 @@ async function create_resche_students_table() {
         }else{
             for(const [index,item] of finalOutputList.filter(item => item.groupId === i).entries()){
                 const groupRow = document.createElement('tr');
-                const groupId = document.createElement('td');
-                groupId.textContent = `${i+1}班`;
-                groupRow.appendChild(groupId);
+                if(index === 0) {
+                    const groupId = document.createElement('th');
+                    groupId.rowSpan = finalOutputList.filter(item => item.groupId === i).length;
+                    groupId.textContent = `${i+1}班`;
+                    groupRow.appendChild(groupId);
+                }
                 const nameCell = document.createElement('td');
                 nameCell.textContent = item.studentName;
                 const classCell = document.createElement('td');
