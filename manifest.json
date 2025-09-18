@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "フォルダ並び替え拡張",
+  "name": "まなびWeb拡張機能4PCSU",
   "version": "1.0",
-  "description": "岡大manabi-webのフォルダ一覧を任意の基準で並び替えます。",
+  "description": "まなびWebサポーターページについて、アンケート集計と振替受講生の一覧をクラス画面からワンクリックで表示する機能、またフォルダ表示においてソート機能を提供します。",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://okadai.manabi-web.net/supporter/folders/*"],
