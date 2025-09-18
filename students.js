@@ -2,29 +2,25 @@
     // UIを作成し、ページ先頭に挿入
     // 振替受講生表示ボタン
     const resche_controls = document.createElement('div');
-    // resche_controls.id = 'table-display-controls';
-    resche_controls.style.margin = '0 auto';
     resche_controls.innerHTML = `<button id="resche-students-table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
     document.body.insertBefore(resche_controls, document.body.firstChild);
 
     // アンケート結果表示ボタン
     const anketo_controls = document.createElement('div');
-    // anketo_controls.id =  'anketo-result-table-controls';
-    anketo_controls.style.margin = '0 auto';
     anketo_controls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
     document.body.insertBefore(anketo_controls, document.body.firstChild);
 
     const resche_btn = document.getElementById('resche-students-table-display-btn');
     resche_btn.addEventListener('click', async () => {
         resche_btn.disabled = true;
-        const rtable = await displayTable();
+        const rtable = await create_resche_students_talbe();
         resche_btn.after(rtable);
     })
 
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
     anketo_btn.addEventListener('click' , async () => {
         anketo_btn.disabled = true;
-        const rtable = await anketo_one();
+        const rtable = await create_anketo_result_table();
         anketo_btn.after(rtable);
     })
 })();
@@ -41,7 +37,7 @@ const getDocumentFromUrl = async (url) => {
     }
 };
 
-async function displayTable() {
+async function create_resche_students_talbe() {
 
     // 1. ページ内にある全ての対象 <a> タグをリストとして取得します
     const linkElements = document.querySelectorAll('a.list-group-item');
@@ -389,7 +385,7 @@ const displayAnketoResultTable = (diffs,satis) => {
     // return wrapper;
 }
 
-const anketo_one = async () =>{
+const create_anketo_result_table = async () =>{
     // ページ内にある全ての対象 <a> タグをリストとして取得
     const linkElements = document.querySelectorAll('a.list-group-item');
     const numGroups = linkElements.length;
