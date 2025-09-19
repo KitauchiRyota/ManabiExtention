@@ -1,5 +1,51 @@
 (function(){
     // UIを作成し、ページ先頭に挿入
+
+    // 複数の場所で開講される時間帯（情報統括とANNEX、など）の場合、アンケート結果や振替受講生の処理をするクラスを選択する（主には事務局Lと職員用）
+    
+    // ページ内にある全ての対象 <a> タグをリストとして取得
+    const linkElements = document.querySelectorAll('a.list-group-item');
+    const numGroups = linkElements.length;
+
+    // ページに表示されているクラス数をカウントするための空のリスト
+    const classNames = new Set();
+
+    if (numGroups === 0) {
+        console.error('対象のリンク(aタグリスト)が見つかりません。');
+    }
+
+    // 取得した全てのリンクをループ処理
+    for (const [index, linkElement] of linkElements.entries()) {
+
+        // 親ページの所属名を取得
+        let className = '';
+        const h4Element = linkElement.querySelector('h4');
+        if (h4Element) {
+            const fullText = h4Element.textContent.trim();
+            const parts = fullText.split(/\s+/);
+            //   「O班」より前の部分を取得、空白が無ければ全文字列を取得
+            className = parts.length > 1 ? parts[0] : fullText;
+            classNames.add(className);
+        } else {
+            continue;
+        }
+    }
+    console.log(classNames);
+
+    // クラス数が2以上の場合、以降の処理の対象となるクラスを選択するUIを表示する
+    if(classNames.size > 1){
+        const class_selector = document.createElement('select');
+        class_selector.id = 'class-selector';
+
+        for(const className of classNames){
+            const op = document.createElement('option');
+            op.value = className;
+            op.textContent = className;
+            class_selector.appendChild(op);
+        }
+        document.body.insertBefore(class_selector, document.body.firstChild);
+    }
+
     // 振替受講生表示ボタン
     const resche_controls = document.createElement('div');
     resche_controls.style.textAlign = 'center';
