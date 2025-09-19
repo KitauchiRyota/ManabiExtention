@@ -1,10 +1,9 @@
-// // 日付の値取得確認
+// // 日付の値取得方法
 // const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
-// const getDate = el => {
-// // Find the clock icon anywhere inside el
-// const clock = el.querySelector('.fa-clock-o');
-// if (!clock) return '';
-// // The date text may be in a text node or span after the icon
+// const divs = items[0].querySelector('.list-group-item-body')
+// divs.querySelector('ul.list-inline').querySelectorAll('li i.fa.fa-clock-o')[0].textContent;
+
+// The date text may be in a text node or span after the icon
 
 // let node = clock.nextSibling;
 // // Skip empty text nodes
@@ -17,6 +16,8 @@
 // getDate(items[0]); // これで日付が取得できるか確認
 
 // 並び替えUIの挿入と並び替え処理
+
+// by Cline (,Kitaucni) 2025
 (function () {
     // 対象リストの親要素を取得
     //   const items = document.querySelectorAll('.list-group-item.list-group-item-warning')
@@ -98,8 +99,9 @@
 
     // ボタンイベント
     document.getElementById('sort-btn').addEventListener('click', () => {
-    const key = document.getElementById('sort-key').value;
-    const sorted = sortItems(items, key);
-    sorted.forEach(item => parent.appendChild(item));
+        const key = document.getElementById('sort-key').value;
+        const sorted = sortItems(items, key);
+        sorted.forEach(item => parent.appendChild(item));
+        // 既存のアイテムをappendChildで末尾に移動させることで並び替えを実現
     });
 })();
