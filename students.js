@@ -214,6 +214,7 @@ const getAnketoResultFromDoc = (doc) => {
         
         for (let j = 1; j < n_rows; j++) { // 1行目はヘッダ行なので2行目から
             let diff = table.rows[j].cells[topics_dict[i].index].textContent;
+            // 満足度は難易度の隣にあると想定
             let sat = table.rows[j].cells[topics_dict[i].index + 1].textContent;
 
             // 先頭の値を10進数に変換
@@ -233,7 +234,7 @@ const getAnketoResultFromDoc = (doc) => {
         diffs.push(diffs_tmp);
         satis.push(satis_tmp);
     }
-    return { diffs, satis };
+    return { diffs, satis, topics_dict };
 
     // // 結果のテキストを生成
     // let resultText = "集計結果\n";
@@ -248,8 +249,8 @@ const getAnketoResultFromDoc = (doc) => {
     // console.log(resultText);
 }
 
-const displayAnketoResultTable = (diffs,satis) => {
-    const n_topics = diffs.length;
+const createAnketoResultTable = (diffs,satis,topics_dict) => {
+    const n_topics = topics_dict.length;
     // テーブル作成
     const rtable = document.createElement('table');
     rtable.border = '1';
@@ -305,8 +306,8 @@ const displayAnketoResultTable = (diffs,satis) => {
         // 難易度のトピック
         const th = document.createElement('th');
         th.colSpan = 3; // 3段階評価
-        th.innerHTML = `topic${i + 1}`;
-        // th.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
+        // th.innerHTML = `topic${i + 1}`;
+        th.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
         setCellStyle(th, true);
         headerRow2.appendChild(th);
     }
@@ -314,8 +315,8 @@ const displayAnketoResultTable = (diffs,satis) => {
         // 満足度のトピック
         const th2 = document.createElement('th');
         th2.colSpan = 4; // 4段階評価
-        th2.innerHTML = `topic${i + 1}`;
-        // th2.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
+        // th2.innerHTML = `topic${i + 1}`;
+        th2.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
         setCellStyle(th2, true);
         headerRow2.appendChild(th2);
     }
@@ -417,6 +418,7 @@ const create_anketo_result_table = async () =>{
     // 結果を格納する空の配列を宣言
     let diffs_result = [];
     let satis_result = [];
+    let topics_dict_result = [];
 
     for (const [index, linkElement] of linkElements.entries()) {
         // 「O班」を取得
@@ -448,13 +450,14 @@ const create_anketo_result_table = async () =>{
                 const anketoUrl = anketoBtn.href;
                 const anketoDoc = await getDocumentFromUrl(anketoUrl);
                 if(anketoDoc){
-                    const { diffs, satis } = getAnketoResultFromDoc(anketoDoc);
+                    const { diffs, satis, topics_dict } = getAnketoResultFromDoc(anketoDoc);
                     console.log('diffs:'+diffs);
                     console.log('satis:'+satis);
                     if(index ===  0){
                         // 初回のループでは配列へコピー
                         diffs_result = structuredClone(diffs);
                         satis_result = structuredClone(satis);
+                        topics_dict_result = structuredClone(topics_dict);
                     } else {
                         // 2回目以降は配列の各要素を加算
                         const n_topics = diffs_result.length;
@@ -479,7 +482,7 @@ const create_anketo_result_table = async () =>{
             console.error(`データ取得に失敗しました (${url}):`, error);
         }
     }
-    return displayAnketoResultTable(diffs_result, satis_result);
+    return createAnketoResultTable(diffs_result, satis_result, topics_dict_result);
     // displayAnketoResultTable(diffs_result, satis_result, document);
     // console.log('diffs:'+JSON.stringify(diffs_result));
     // console.log('status:'+JSON.stringify(satis_result));
