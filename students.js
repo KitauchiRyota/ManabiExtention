@@ -389,7 +389,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     // wrapper.style.fontSize = '14px';
     // wrapper.style.fontFamily = 'Arial, sans-serif';
     // wrapper.style.fontFamily = 'bold';
-    
+
 
     // const p1 = document.createElement('p');
     // const p2 = document.createElement('p');
@@ -410,9 +410,6 @@ const create_anketo_result_table = async () =>{
     // ページ内にある全ての対象 <a> タグをリストとして取得
     const linkElements = document.querySelectorAll('a.list-group-item');
     const numGroups = linkElements.length;
-
-    // 最終的な出力結果
-    // const finalOutputList = [];
 
     if (numGroups === 0) {
         console.error('処理を中断しました: 対象のリンクが見つかりません。');
@@ -441,10 +438,7 @@ const create_anketo_result_table = async () =>{
         const url = linkElement.href;
 
         try {
-            const response = await fetch(url);
-            const htmlText = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, 'text/html');
+            const doc = await getDocumentFromUrl(url);
 
             // 「アンケート」ボタンのaタグを取得
             const anketoBtn = Array.from(doc.querySelectorAll('a.btn.btn-sm.btn-primary'))
@@ -464,9 +458,7 @@ const create_anketo_result_table = async () =>{
                         topics_dict_result = structuredClone(topics_dict);
                     } else {
                         // 2回目以降は配列の各要素を加算
-                        const n_topics = diffs_result.length;
-                        const n_diffs = 3;
-                        const n_satis = 4;
+                        const n_topics = topics_dict_result.length;
                         for (let i = 0; i < n_topics; i++) {
                             for (let j = 0; j < n_diffs; j++) {
                                 diffs_result[i][j] += diffs[i][j];
@@ -487,7 +479,4 @@ const create_anketo_result_table = async () =>{
         }
     }
     return createAnketoResultTable(diffs_result, satis_result, topics_dict_result);
-    // displayAnketoResultTable(diffs_result, satis_result, document);
-    // console.log('diffs:'+JSON.stringify(diffs_result));
-    // console.log('status:'+JSON.stringify(satis_result));
 }
