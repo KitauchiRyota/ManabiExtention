@@ -29,13 +29,8 @@
     for (const [index, linkElement] of linkElements.entries()) {
 
         // 親ページの所属名を取得
-        let className = '';
-        const h4Element = linkElement.querySelector('h4');
-        if (h4Element) {
-            const fullText = h4Element.textContent.trim();
-            const parts = fullText.split(/\s+/);
-            //   「O班」より前の部分を取得、空白が無ければ全文字列を取得
-            className = parts.length > 1 ? parts[0] : fullText;
+        let className = getGroupNameByGroupItem(linkElement);
+        if (className) {
             classNames.add(className);
         } else {
             continue;
@@ -83,16 +78,53 @@
     })
 })();
 
-const filterAnchorsByClassName = (linkElements, className) => {
-    if(className){
+/**
+ * １つのa.list-group-itemから、グループ名（情報統括 or ANNEX）を返す。オンラインの場合は班名を返す。
+ * @param {object} linkElement - １つのa.list-group-item要素
+ * @returns {string|null} - グループ名
+ */
+function getGroupNameByGroupItem(linkElement) {
+    let groupName = '';
+    const h4Element = linkElement.querySelector('h4');
+    if (h4Element) {
+        const fullText = h4Element.textContent.trim();
+        const parts = fullText.split(/\s+/);
+        groupName = parts.length > 1 ? parts[0] : fullText;
+        // 対面クラスとオンラインクラスの両方に対応
+        // 「情報統括センター 1班」の場合は「情報統括センター」のみ、「1班」の場合は「1班」を返す
+        return groupName;
+    } else {
+        return null;
+    }
+}
+
+/**
+ * １つのa.list-group-itemから班の番号を文字列で返す。
+ * @param {object} linkElement - １つのa.list-group-item要素
+ * @returns {string|null} - 班の番号
+ */
+function getGroupNumberByGroupItem(linkElement) {
+    let groupNumber = '';
+    const h4Element = linkElement.querySelector('h4');
+    if (h4Element) {
+        const fullText = h4Element.textContent.trim();
+        const parts = fullText.split(/\s+/);
+        groupNumber = parts.length > 1 ? parts[1] : fullText;
+        // 対面クラスとオンラインクラスの両方に対応
+        // 「情報統括センター 1班」の場合は「1班」のみ、「1班」との場合は「1班」を返す
+        return groupNumber;
+    } else {
+        return null;
+    }
+}
+
+const filterAnchorsByClassName = (linkElements, selected_class) => {
+    if(selected_class){
         const filteredLinkElements = [];
         linkElements.forEach(el => {
-            const h4Element = el.querySelector('h4');
-            if (h4Element) {
-                const fullText = h4Element.textContent.trim();
-                const parts = fullText.split(/\s+/);
-                // 開講場所「情報統括・ANNEX」と班「O班」を分離
-                if(parts[0] === className){
+            const className = getGroupNameByGroupItem(el);
+            if (className) {
+                if(className === selected_class){
                     filteredLinkElements.push(el);
                 }else{
                     return;
@@ -141,16 +173,8 @@ async function create_resche_students_table(selected_class) {
     for (const [index, linkElement] of linkElements.entries()) {
 
         // 親ページの所属名を取得
-        let groupName = '';
-        const h4Element = linkElement.querySelector('h4');
-        if (h4Element) {
-            const fullText = h4Element.textContent.trim();
-            const parts = fullText.split(/\s+/);
-            //   「O班」を取得
-            groupName = parts.length > 1 ? parts[1] : fullText;
-            // 対面クラスとオンラインクラスの両方に対応
-            // 「情報統括センター 1班」の場合は「1班」のみ、「1班」との場合は「1班」を返す
-        } else {
+        let groupNumber = getGroupNumberByGroupItem(linkElement);
+        if (!groupNumber) {
             continue;
         }
         
@@ -173,7 +197,7 @@ async function create_resche_students_table(selected_class) {
                     }
                 });
             } else {
-                console.log(`データなし: ${groupName} (${url}) のページに受講生情報の表が見つかりませんでした。`);
+                console.log(`データなし: ${groupNumber} (${url}) のページに受講生情報の表が見つかりませんでした。`);
             }
 
         } catch (error) {
@@ -508,16 +532,10 @@ const create_anketo_result_table = async (selected_class) =>{
 
     for (const [index, linkElement] of linkElements.entries()) {
         // 「O班」を取得
-        let groupName = '';
-        const h4Element = linkElement.querySelector('h4');
-        if (h4Element) {
-            const fullText = h4Element.textContent.trim();
-            const parts = fullText.split(/\s+/);
-            
-            groupName = parts.length > 1 ? parts[1] : fullText;
-        } else {
+        let groupNumber = getGroupNumberByGroupItem(linkElement);
+        if (!groupNumber) {
             continue;
-        }
+        };
         
         // 子ページのhtmlを取得
         const url = linkElement.href;
@@ -554,10 +572,10 @@ const create_anketo_result_table = async (selected_class) =>{
                         }
                     }
                 }else{
-                    console.log(`${groupName}のページでアンケートページのdocumentを取得できませんでした。`);
+                    console.log(`${groupNumber}のページでアンケートページのdocumentを取得できませんでした。`);
                 }
             } else {
-                console.log(`${groupName}のページでアンケートボタンを取得できませんでした。`);
+                console.log(`${groupNumber}のページでアンケートボタンを取得できませんでした。`);
             }
         } catch (error) {
             console.error(`データ取得に失敗しました (${url}):`, error);
