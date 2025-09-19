@@ -118,7 +118,13 @@ function getGroupNumberByGroupItem(linkElement) {
     }
 }
 
-const filterAnchorsByClassName = (linkElements, selected_class) => {
+/** 
+ * a.list-group-itemのリストを受け取り、指定されたクラス名でフィルタリングされたリストを返す
+ * @param {NodeList} linkElements - すべてのa.list-group-item要素のリスト
+ * @param {string|null} selected_class - フィルタリングに使用するクラス名。nullの場合はフィルタリングしない
+ * @returns {object} - フィルタリングされたa.list-group-item要素
+ */
+function filterAnchorsByClassName(linkElements, selected_class) {
     if(selected_class){
         const filteredLinkElements = [];
         linkElements.forEach(el => {
@@ -139,7 +145,13 @@ const filterAnchorsByClassName = (linkElements, selected_class) => {
         return linkElements;
     }
 }
-const getDocumentFromUrl = async (url) => {
+
+/**
+ * 指定されたURLからHTMLドキュメントを取得する
+ * @param {string} url - 取得するURL
+ * @returns {Document|null} - 取得したHTMLドキュメント、または失敗した場合はnull
+ */
+async function getDocumentFromUrl(url) {
     try{
         const response = await fetch(url);
         const htmlText = await response.text();
@@ -151,6 +163,11 @@ const getDocumentFromUrl = async (url) => {
     }
 };
 
+/**
+ * ページ内のa.list-group-item要素の内、指定されたクラス名のみについて、振替で来る受講生情報の要素を作成する
+ * @param {string|null} selected_class - フィルタリングに使用するクラス名。nullの場合はフィルタリングしない
+ * @returns {HTMLDivElement|null} - 作成された受講生情報のdiv要素、または失敗した場合はnull
+ */
 async function create_resche_students_table(selected_class) {
     const name_col_index = 0;
     const class_from_col_index = 3;
@@ -290,7 +307,12 @@ async function create_resche_students_table(selected_class) {
 const n_diffs = 3;
 const n_satis = 4;
 
-const getAnketoResultFromDoc = (doc) => {
+/**
+ * アンケートページのURLを受け取り、集計した結果を返す
+ * @param {string} url - アンケートページのURL
+ * @returns {{object}} - 難易度、満足度、トピック名の辞書型配列の3つのオブジェクトを返す
+ */
+function getAnketoResultFromDoc(doc) {
     
     // アンケート結果の表を取得
     const table = doc.querySelector('table');
@@ -361,7 +383,14 @@ const getAnketoResultFromDoc = (doc) => {
     // console.log(resultText);
 }
 
-const createAnketoResultTable = (diffs,satis,topics_dict) => {
+/**
+ * 集計結果の配列やオブジェクトを受け取り、表形式に変換
+ * @param {Array} diffs - 難易度の集計結果
+ * @param {Array} satis - 満足度の集計結果
+ * @param {object} topics_dict - トピックの辞書
+ * @returns {HTMLTableElement} - 集計結果の表
+ */
+function createAnketoResultTable(diffs,satis,topics_dict) {
     const n_topics = topics_dict.length;
     // テーブル作成
     const rtable = document.createElement('table');
@@ -512,7 +541,12 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     // return wrapper;
 }
 
-const create_anketo_result_table = async (selected_class) =>{
+/**
+ * アンケート集計結果の表を作成
+ * @param {string|null} selected_class - フィルタリングに使用するクラス名。nullの場合はフィルタリングしない
+ * @returns {HTMLTableElement} - 集計結果の表
+ */
+async function create_anketo_result_table(selected_class) {
     // ページ内にある全ての対象aタグをリストとして取得
     const linkElements_all = document.querySelectorAll('a.list-group-item');
 
