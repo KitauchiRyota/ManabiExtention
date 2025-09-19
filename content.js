@@ -1,7 +1,21 @@
-// // 日付の値取得方法
-// const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
-// const divs = items[0].querySelector('.list-group-item-body')
-// divs.querySelector('ul.list-inline').querySelectorAll('li i.fa.fa-clock-o')[0].textContent;
+// 日付の値取得方法
+const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
+const divs = items[0].querySelector('.list-group-item-body')
+const date_string = (divs.querySelector('ul.list-inline').querySelectorAll('li i.fa.fa-clock-o')[0]?.textContent || '').trim();
+// '2024/12/20 20:55:40'
+// const formatted_date = date_string.replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, (match, p1, p2, p3) => {
+//     return `${p1}-${p2.padStart(2, '0')}-${p3.padStart(2, '0')}`;
+// });
+const isoString = date_string.replace(
+  /(\d{4})\/(\d{1,2})\/(\d{1,2})\s(.+)/,
+  (match, year, month, day, time) => {
+    const paddedMonth = month.padStart(2, '0');
+    const paddedDay = day.padStart(2, '0');
+    
+    // 年月日をハイフンで、日付と時刻の間を'T'でつなぐ
+    return `${year}-${paddedMonth}-${paddedDay}T${time}`;
+  }
+);
 
 // The date text may be in a text node or span after the icon
 
@@ -54,22 +68,18 @@
 
             // 日付取得
             const getDate = el => {
-                // Find the clock icon anywhere inside el
-                const clock = el.querySelector('.fa-clock-o');
-                if (!clock) {
-                    return '';
-                }
-                // The date text may be in a text node or span after the icon
-
-                let node = clock.nextSibling;
-                // Skip empty text nodes
-                while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
-                    node = node.nextSibling;
-                }
-                if (!node) {
-                    return '';
-                }
-                return (node.textContent || node.nodeValue || '').trim();
+                const divs = el.querySelector('.list-group-item-body')
+                const date_string = (divs.querySelector('ul.list-inline').querySelectorAll('li i.fa.fa-clock-o')[0]?.textContent || '').trim();
+                const isoString = date_string.replace(
+                    /(\d{4})\/(\d{1,2})\/(\d{1,2})\s(.+)/,
+                    (match, year, month, day, time) => {
+                        const paddedMonth = month.padStart(2, '0');
+                        const paddedDay = day.padStart(2, '0');
+                        // 年月日をハイフンで、日付と時刻の間を'T'でつなぐ
+                        return `${year}-${paddedMonth}-${paddedDay}T${time}`;
+                    }
+                );
+                return new Date(isoString);
             };
 
             let vA, vB, cmp;
@@ -84,11 +94,11 @@
                     break;
                 case 'date-asc':
                     vA = getDate(a); vB = getDate(b);
-                    cmp = vA.localeCompare(vB, 'ja');
+                    cmp = vA - vB;
                     break;
                 case 'date-desc':
                     vA = getDate(a); vB = getDate(b);
-                    cmp = vB.localeCompare(vA, 'ja');
+                    cmp = vB - vA;
                     break;
                 default:
                     cmp = 0;
