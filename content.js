@@ -1,40 +1,6 @@
-// 日付の値取得方法
-const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
-const divs = items[0].querySelector('.list-group-item-body')
-const date_string = (divs.querySelector('ul.list-inline').querySelectorAll('li i.fa.fa-clock-o')[0]?.textContent || '').trim();
-// '2024/12/20 20:55:40'
-// const formatted_date = date_string.replace(/(\d{4})\/(\d{1,2})\/(\d{1,2})/, (match, p1, p2, p3) => {
-//     return `${p1}-${p2.padStart(2, '0')}-${p3.padStart(2, '0')}`;
-// });
-const isoString = date_string.replace(
-  /(\d{4})\/(\d{1,2})\/(\d{1,2})\s(.+)/,
-  (match, year, month, day, time) => {
-    const paddedMonth = month.padStart(2, '0');
-    const paddedDay = day.padStart(2, '0');
-    
-    // 年月日をハイフンで、日付と時刻の間を'T'でつなぐ
-    return `${year}-${paddedMonth}-${paddedDay}T${time}`;
-  }
-);
-
-// The date text may be in a text node or span after the icon
-
-// let node = clock.nextSibling;
-// // Skip empty text nodes
-// while (node && node.nodeType === Node.TEXT_NODE && !node.textContent.trim()) {
-//     node = node.nextSibling;
-// }
-// if (!node) return '';
-// return (node.textContent || node.nodeValue || '').trim();
-// };
-// getDate(items[0]); // これで日付が取得できるか確認
-
-// 並び替えUIの挿入と並び替え処理
-
 // by Cline (,Kitaucni) 2025
 (function () {
-    // 対象リストの親要素を取得
-    //   const items = document.querySelectorAll('.list-group-item.list-group-item-warning')
+    // 対象要素のリストを取得
     const items = Array.from(document.querySelectorAll('.list-group-item.list-group-item-warning'));
     if (items.length === 0) {
         return;
@@ -64,7 +30,6 @@ const isoString = date_string.replace(
         return items.slice().sort((a, b) => {
             // タイトル取得
             const getTitle = el => (el.querySelector('h4.list-group-item-heading')?.textContent || '').trim();
-            // const getDate = el => (el.querySelector('.fa.fa-clock-o')?.textContent || '').trim();
 
             // 日付取得
             const getDate = el => {
