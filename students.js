@@ -78,7 +78,7 @@
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
     anketo_btn.addEventListener('click' , async () => {
         anketo_btn.disabled = true;
-        const rtable = await create_anketo_result_table();
+        const rtable = await create_anketo_result_table(selected_class);
         anketo_btn.after(rtable);
     })
 })();
@@ -486,9 +486,33 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     // return wrapper;
 }
 
-const create_anketo_result_table = async () =>{
-    // ページ内にある全ての対象 <a> タグをリストとして取得
-    const linkElements = document.querySelectorAll('a.list-group-item');
+const create_anketo_result_table = async (selected_class) =>{
+    // ページ内にある全ての対象aタグをリストとして取得
+    const linkElements_all = document.querySelectorAll('a.list-group-item');
+    const linkElements = [];
+
+    // 引数でクラスが指定されている場合、取得したaタグのリストをフィルタリング
+    if(selected_class){
+        linkElements_all.forEach(el => {
+            const h4Element = el.querySelector('h4');
+            if (h4Element) {
+                const fullText = h4Element.textContent.trim();
+                const parts = fullText.split(/\s+/);
+                // 開講場所「情報統括・ANNEX」と班「O班」を分離
+                if(parts[0] === selected_class){
+                    linkElements.push(el);
+                }else{
+                    return;
+                }
+            }else{
+                return;
+            }
+        });
+    }else {
+        // クラスが指定されていない場合は全てのリンクを対象とする
+        linkElements = linkElements_all;
+    }
+
     const numGroups = linkElements.length;
 
     if (numGroups === 0) {
