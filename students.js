@@ -39,6 +39,8 @@ const getDocumentFromUrl = async (url) => {
 };
 
 async function create_resche_students_table() {
+    const name_col_index = 0;
+    const class_from_col_index = 3;
 
     // ページ内にある全ての対象 <a> タグをリストとして取得
     const linkElements = document.querySelectorAll('a.list-group-item');
@@ -80,8 +82,8 @@ async function create_resche_students_table() {
             if (students_table) {
                 const allRows = students_table.querySelectorAll('tbody tr');
                 allRows.forEach(row => {
-                    const nameCell = row.cells[0];
-                    const classFrom = row.cells[3].textContent.trim();
+                    const nameCell = row.cells[name_col_index];
+                    const classFrom = row.cells[class_from_col_index].textContent.trim();
                     if (classFrom && classFrom.endsWith('から)')) {
                         const name = nameCell.textContent.trim();
                         // 「班ID，受講生氏名，変更元クラス」の形式で、最終結果リストに追加
@@ -178,6 +180,10 @@ async function create_resche_students_table() {
     // return result_table;
 }
 
+// 難易度・満足度の評価段階数
+const n_diffs = 3;
+const n_satis = 4;
+
 const getAnketoResultFromDoc = (doc) => {
     
     // アンケート結果の表を取得
@@ -197,7 +203,7 @@ const getAnketoResultFromDoc = (doc) => {
         if(headerText.includes('で扱った内容について') && headerText.includes('あてはまるものを答えてください')) {
         // 「，」と「、」を考慮．半角全角のパターンも考慮するとパターン数が多くなるので置換はしない．
             // 「」の中身を取得
-            topics_dict.push( { name : headerText.match(/「(.*?)」/)[1] , index : i } );
+            topics_dict.push( { name : headerText.match(/「(.*?)」/)[1] , index : i } ); // [1]でマッチした文字列のうち、括弧の中身だけと取り出す
             n_topics++;
         }
     }
@@ -221,11 +227,11 @@ const getAnketoResultFromDoc = (doc) => {
             let diffValue = parseInt(diff[1], 10);
             let satValue = parseInt(sat[1], 10);
 
-            if (diffValue >= 1 && diffValue <= 3) {
+            if (diffValue >= 1 && diffValue <= n_diffs) {
                 diffs_tmp[diffValue - 1]++;
             }
 
-            if (satValue >= 1 && satValue <= 4) {
+            if (satValue >= 1 && satValue <= n_satis) {
                 // eval(`satis${satValue}++`);
                 satis_tmp[satValue - 1]++;
             }
@@ -286,14 +292,14 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
 
     // 難易度ヘッダー
     let th1 = document.createElement('th');
-    th1.colSpan = n_topics * 3; // 3段階評価
+    th1.colSpan = n_topics * n_diffs; // 3段階評価
     th1.textContent = '難易度';
     setCellStyle(th1, true);
     headerRow1.appendChild(th1);
 
     // 満足度ヘッダー
     let th2 = document.createElement('th');
-    th2.colSpan = n_topics * 4; // 4段階評価
+    th2.colSpan = n_topics * n_satis; // 4段階評価
     th2.textContent = '満足度';
     setCellStyle(th2, true);
     headerRow1.appendChild(th2);
@@ -305,7 +311,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     for (let i = 0; i < n_topics; i++) {
         // 難易度のトピック
         const th = document.createElement('th');
-        th.colSpan = 3; // 3段階評価
+        th.colSpan = n_diffs; // 3段階評価
         // th.innerHTML = `topic${i + 1}`;
         th.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
         setCellStyle(th, true);
@@ -314,7 +320,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     for (let i = 0; i < n_topics; i++) {
         // 満足度のトピック
         const th2 = document.createElement('th');
-        th2.colSpan = 4; // 4段階評価
+        th2.colSpan = n_satis; // 4段階評価
         // th2.innerHTML = `topic${i + 1}`;
         th2.innerHTML = `topic${i + 1}<br>${topics_dict[i].name}`;
         setCellStyle(th2, true);
@@ -325,7 +331,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     // 3行目：評価ヘッダー
     const headerRow3 = document.createElement('tr');
     for (let i = 0; i < n_topics; i++) {
-        for (let j = 0; j < 3; j++) {
+        for (let j = 0; j < n_diffs; j++) {
             // 難易度の評価
             const th = document.createElement('th');
             th.textContent = `${j + 1}`;
@@ -335,7 +341,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     }
 
     for (let i = 0; i < n_topics; i++) {
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < n_satis; j++) {
             // 満足度の評価
             const th = document.createElement('th');
             th.textContent = `${j + 1}`;
@@ -354,7 +360,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
 
     // 難易度からデータを追加
     for (let i = 0; i < n_topics; i++) {
-        for (let j = 0; j < 3; j++) {
+        for (let j = 0; j < n_diffs; j++) {
             const td = document.createElement('td');
             td.textContent = diffs[i][j]
             setCellStyle(td);
@@ -363,7 +369,7 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
         }
     }
     for (let i = 0; i < n_topics; i++) {
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < n_satis; j++) {
             const td = document.createElement('td');
             td.textContent = satis[i][j]
             setCellStyle(td);
