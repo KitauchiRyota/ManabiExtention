@@ -83,6 +83,30 @@
     })
 })();
 
+const filterAnchorsByClassName = (linkElements, className) => {
+    if(className){
+        const filteredLinkElements = [];
+        linkElements.forEach(el => {
+            const h4Element = el.querySelector('h4');
+            if (h4Element) {
+                const fullText = h4Element.textContent.trim();
+                const parts = fullText.split(/\s+/);
+                // 開講場所「情報統括・ANNEX」と班「O班」を分離
+                if(parts[0] === className){
+                    filteredLinkElements.push(el);
+                }else{
+                    return;
+                }
+            }else{
+                return;
+            }
+        });
+        return filteredLinkElements;
+    }else {
+        // クラスが指定されていない場合はそのまま返す
+        return linkElements;
+    }
+}
 const getDocumentFromUrl = async (url) => {
     try{
         const response = await fetch(url);
@@ -101,30 +125,8 @@ async function create_resche_students_table(selected_class) {
 
     // ページ内にある全ての対象aタグをリストとして取得
     const linkElements_all = document.querySelectorAll('a.list-group-item');
-    const linkElements = [];
 
-    // 引数でクラスが指定されている場合、取得したaタグのリストをフィルタリング
-    if(selected_class){
-        linkElements_all.forEach(el => {
-            const h4Element = el.querySelector('h4');
-            if (h4Element) {
-                const fullText = h4Element.textContent.trim();
-                const parts = fullText.split(/\s+/);
-                // 開講場所「情報統括・ANNEX」と班「O班」を分離
-                if(parts[0] === selected_class){
-                    linkElements.push(el);
-                }else{
-                    return;
-                }
-            }else{
-                return;
-            }
-        });
-    }else {
-        // クラスが指定されていない場合は全てのリンクを対象とする
-        linkElements = linkElements_all;
-    }
-
+    const linkElements = filterAnchorsByClassName(linkElements_all, selected_class);
     const numGroups = linkElements.length;
 
     // 最終的な出力結果を保存するための空のリストを用意
@@ -489,29 +491,8 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
 const create_anketo_result_table = async (selected_class) =>{
     // ページ内にある全ての対象aタグをリストとして取得
     const linkElements_all = document.querySelectorAll('a.list-group-item');
-    const linkElements = [];
 
-    // 引数でクラスが指定されている場合、取得したaタグのリストをフィルタリング
-    if(selected_class){
-        linkElements_all.forEach(el => {
-            const h4Element = el.querySelector('h4');
-            if (h4Element) {
-                const fullText = h4Element.textContent.trim();
-                const parts = fullText.split(/\s+/);
-                // 開講場所「情報統括・ANNEX」と班「O班」を分離
-                if(parts[0] === selected_class){
-                    linkElements.push(el);
-                }else{
-                    return;
-                }
-            }else{
-                return;
-            }
-        });
-    }else {
-        // クラスが指定されていない場合は全てのリンクを対象とする
-        linkElements = linkElements_all;
-    }
+    const linkElements = filterAnchorsByClassName(linkElements_all, selected_class);
 
     const numGroups = linkElements.length;
 
