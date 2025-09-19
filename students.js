@@ -1,6 +1,17 @@
 (function(){
     // UIを作成し、ページ先頭に挿入
 
+    // 振替受講生表示ボタン
+    const resche_controls = document.createElement('div');
+    resche_controls.style.textAlign = 'center';
+    resche_controls.innerHTML = `<button id="resche-students-table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
+    document.body.insertBefore(resche_controls, document.body.firstChild);
+
+    // アンケート結果表示ボタン
+    const anketo_controls = document.createElement('div');
+    anketo_controls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
+    document.body.insertBefore(anketo_controls, document.body.firstChild);
+    
     // 複数の場所で開講される時間帯（情報統括とANNEX、など）の場合、アンケート結果や振替受講生の処理をするクラスを選択する（主には事務局Lと職員用）
     
     // ページ内にある全ての対象 <a> タグをリストとして取得
@@ -56,18 +67,6 @@
         selected_class = event.target.value;
         console.log(`選択されたクラス: ${selected_class}`);
     });
-
-
-    // 振替受講生表示ボタン
-    const resche_controls = document.createElement('div');
-    resche_controls.style.textAlign = 'center';
-    resche_controls.innerHTML = `<button id="resche-students-table-display-btn" style="margin:10px auto; display:block;">振替受講生一覧を表示</button>`;
-    document.body.insertBefore(resche_controls, document.body.firstChild);
-
-    // アンケート結果表示ボタン
-    const anketo_controls = document.createElement('div');
-    anketo_controls.innerHTML = `<button id="anketo-result-table-display-btn" style="margin:10px auto; display:block;">アンケート結果を表示</button>`;
-    document.body.insertBefore(anketo_controls, document.body.firstChild);
 
     const resche_btn = document.getElementById('resche-students-table-display-btn');
     resche_btn.addEventListener('click', async () => {
