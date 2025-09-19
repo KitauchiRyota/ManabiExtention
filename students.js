@@ -379,32 +379,30 @@ const createAnketoResultTable = (diffs,satis,topics_dict) => {
     }
 
     rtable.appendChild(row);
-    // doc.body.insertBefore(rtable, doc.body.firstChild);
-
-    // ラッパーdivを作成して中央ぞろえ
-    const wrapper = document.createElement('div');
-    // wrapper.style.display = 'flex';
-    wrapper.style.marginLeft = '40px';
-    wrapper.style.marginTop = '40px'; // 上部の余白を追加
-    wrapper.style.fontSize = '14px';
-    wrapper.style.fontFamily = 'Arial, sans-serif';
-    wrapper.style.fontFamily = 'bold';
-
-
-    const p1 = document.createElement('p');
-    const p2 = document.createElement('p');
-    // const p3 = document.createElement('p');
-    p1.textContent = "・アンケート集計結果です．";
-    p2.textContent = "・この表はGoogleドキュメントにコピー＆ペーストできます．";
-    // p3.textContent = "・連続して実行すると結果が変わるので，集計しなおす場合は一度ページを更新してください．";
-    wrapper.appendChild(p1);
-    wrapper.appendChild(p2);
-    // wrapper.appendChild(p3);
-
-    // ページの先頭に追加
-    // doc.body.after(wrapper, doc.body.firstChild);
-    wrapper.appendChild(rtable);
     return rtable;
+
+    // // 説明文も一緒に表示する場合はこちらを使用
+    // const wrapper = document.createElement('div');
+    // // wrapper.style.display = 'flex';
+    // wrapper.style.marginLeft = '40px';
+    // wrapper.style.marginTop = '40px'; // 上部の余白を追加
+    // wrapper.style.fontSize = '14px';
+    // wrapper.style.fontFamily = 'Arial, sans-serif';
+    // wrapper.style.fontFamily = 'bold';
+    
+
+    // const p1 = document.createElement('p');
+    // const p2 = document.createElement('p');
+    // // const p3 = document.createElement('p');
+    // p1.textContent = "・アンケート集計結果です．";
+    // p2.textContent = "・この表はGoogleドキュメントにコピー＆ペーストできます．";
+    // // p3.textContent = "・連続して実行すると結果が変わるので，集計しなおす場合は一度ページを更新してください．";
+    // wrapper.appendChild(p1);
+    // wrapper.appendChild(p2);
+    // // wrapper.appendChild(p3);
+
+    // // ページの先頭に追加
+    // wrapper.appendChild(rtable);
     // return wrapper;
 }
 
