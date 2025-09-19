@@ -36,6 +36,8 @@
     if(classNames.size > 1){
         const class_selector = document.createElement('select');
         class_selector.id = 'class-selector';
+        class_selector.style.margin = '10px auto';
+        class_selector.style.display = 'block';
 
         for(const className of classNames){
             const op = document.createElement('option');
@@ -45,6 +47,16 @@
         }
         document.body.insertBefore(class_selector, document.body.firstChild);
     }
+
+    const class_selector = document.getElementById('class-selector');
+    let selected_class = class_selector ? class_selector.value : null;
+    // console.log(selected_class);
+
+    class_selector?.addEventListener('change', (event) => {
+        selected_class = event.target.value;
+        console.log(`選択されたクラス: ${selected_class}`);
+    });
+
 
     // 振替受講生表示ボタン
     const resche_controls = document.createElement('div');
@@ -60,7 +72,7 @@
     const resche_btn = document.getElementById('resche-students-table-display-btn');
     resche_btn.addEventListener('click', async () => {
         resche_btn.disabled = true;
-        const rtable = await create_resche_students_table();
+        const rtable = await create_resche_students_table(selected_class);
         resche_btn.after(rtable);
     })
 
@@ -84,12 +96,35 @@ const getDocumentFromUrl = async (url) => {
     }
 };
 
-async function create_resche_students_table() {
+async function create_resche_students_table(selected_class) {
     const name_col_index = 0;
     const class_from_col_index = 3;
 
-    // ページ内にある全ての対象 <a> タグをリストとして取得
-    const linkElements = document.querySelectorAll('a.list-group-item');
+    // ページ内にある全ての対象aタグをリストとして取得
+    const linkElements_all = document.querySelectorAll('a.list-group-item');
+    const linkElements = [];
+
+    // 引数でクラスが指定されている場合、取得したaタグのリストをフィルタリング
+    if(selected_class){
+        linkElements_all.forEach(el => {
+            const h4Element = el.querySelector('h4');
+            if (h4Element) {
+                const fullText = h4Element.textContent.trim();
+                const parts = fullText.split(/\s+/);
+                // 開講場所「情報統括・ANNEX」と班「O班」を分離
+                if(parts[0] === selected_class){
+                    linkElements.push(el);
+                }else{
+                    return;
+                }
+            }else{
+                return;
+            }
+        });
+    }else {
+        // クラスが指定されていない場合は全てのリンクを対象とする
+        linkElements = linkElements_all;
+    }
 
     const numGroups = linkElements.length;
 
