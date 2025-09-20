@@ -161,6 +161,7 @@ function filterAnchorsByClassName(linkElements, selected_class) {
  */
 async function getDocumentFromUrl(url) {
     try{
+        await sleep(500);
         const response = await fetch(url);
         const htmlText = await response.text();
         const parser = new DOMParser();
