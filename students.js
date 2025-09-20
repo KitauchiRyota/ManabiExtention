@@ -79,17 +79,36 @@
     const resche_btn = document.getElementById('resche-students-table-display-btn');
     resche_btn.addEventListener('click', async () => {
         resche_btn.disabled = true;
+        const intervalId = startLoadingStatus(status_resche);
         const rtable = await create_resche_students_table(selected_class);
+        stopLoadingStatus(status_resche, intervalId);
         resche_btn.after(rtable);
     })
 
     const anketo_btn = document.getElementById('anketo-result-table-display-btn');
     anketo_btn.addEventListener('click' , async () => {
         anketo_btn.disabled = true;
+        const intervalId = startLoadingStatus(status_anketo);
         const rtable = await create_anketo_result_table(selected_class);
+        stopLoadingStatus(status_anketo, intervalId);
         anketo_btn.after(rtable);
     })
 })();
+
+function startLoadingStatus(statusDiv) {
+    let dotCount = 0;
+    statusDiv.textContent = '読み込み中';
+    const intervalId = setInterval(() => {
+        dotCount = (dotCount + 1) % 4; // 0～3個のドット
+        statusDiv.textContent = '読み込み中' + '・'.repeat(dotCount);
+    }, 500);
+    return intervalId;
+}
+
+function stopLoadingStatus(statusDiv, intervalId) {
+    clearInterval(intervalId);
+    statusDiv.textContent = '';
+}
 
 /**
  * 指定時間待機し、プログラムを一時停止する（主にサーバーへの負荷軽減のため）
