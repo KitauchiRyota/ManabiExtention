@@ -79,6 +79,14 @@
 })();
 
 /**
+ * 指定時間待機し、プログラムを一時停止する（主にサーバーへの負荷軽減のため）
+ * @param {int} ms - 待機時間（ミリ秒） 
+ */
+async function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
  * １つのa.list-group-itemから、グループ名（情報統括 or ANNEX）を返す。オンラインの場合は班名を返す。
  * @param {object} linkElement - １つのa.list-group-item要素
  * @returns {string|null} - グループ名
