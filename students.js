@@ -95,6 +95,11 @@
     })
 })();
 
+/**
+ * 引数で受け取ったdiv要素に「読み込み中」を表示し、ドットの数を動かして処理中であることを示す。
+ * @param {HTMLElement} statusDiv - status表示用のdiv要素
+ * @returns {number} - setIntervalのID
+ */
 function startLoadingStatus(statusDiv) {
     let dotCount = 0;
     statusDiv.textContent = '読み込み中';
@@ -105,6 +110,11 @@ function startLoadingStatus(statusDiv) {
     return intervalId;
 }
 
+/**
+ * startLoadingStatusで開始した読み込み中の処理を停止し、メッセージを削除する。
+ * @param {HTMLElement} statusDiv - status表示用のdiv要素
+ * @param {number} intervalId - setIntervalのID
+ */
 function stopLoadingStatus(statusDiv, intervalId) {
     clearInterval(intervalId);
     statusDiv.textContent = '';
