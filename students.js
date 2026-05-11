@@ -382,7 +382,7 @@ function getAnketoResultFromDoc(doc) {
         if(headerText.includes('で扱った内容について') && headerText.includes('あてはまるものを答えてください')) {
         // 「，」と「、」を考慮．半角全角のパターンも考慮するとパターン数が多くなるので置換はしない．
             // 「」の中身を取得
-            topics_dict.push( { name : headerText.match(/「(.*?)」/)[1] , index : i } ); // [1]でマッチした文字列のうち、括弧の中身だけと取り出す
+            topics_dict.push( { name : headerText.match(/「(.*?)」/s)[1] , index : i } ); // [1]でマッチした文字列のうち、括弧の中身だけと取り出す
             n_topics++;
         }
     }

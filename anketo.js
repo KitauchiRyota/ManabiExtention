@@ -15,7 +15,7 @@ for (let i = 0; i < headers.length; i++) {
     if(headerText.includes('で扱った内容について') && headerText.includes('あてはまるものを答えてください')) {
     // 「，」と「、」を考慮．半角全角のパターンも考慮するとパターン数が多くなるので置換はしない．
         // 「」の中身を取得
-        topics_dict.push( { name : headerText.match(/「(.*?)」/)[1] , index : i } );
+        topics_dict.push( { name : headerText.match(/「(.*?)」/s)[1] , index : i } );
         n_topics++;
     }
 }
